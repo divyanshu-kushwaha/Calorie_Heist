@@ -1,24 +1,39 @@
 //jshint esversion:6
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
+const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require('mongoose');
-const https = require('https');
-const encrypt = require('mongoose-encryption');
+const mongoose = require("mongoose");
+const https = require("https");
+const ejs = require("ejs");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
+
+///////////////////////////SESSION/////////////////////////////////
+app.use(
+  session({
+    secret: "HelloEverybody",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 ////////////////////////// CONNECTING TO MONGODB ATLAS ///////////////////////////
 
-mongoose.connect('process.env.DATABASE',
-  {
-    useNewUrlParser: true
-  });
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+});
+// mongoose.set("useCreateIndex", true);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error: "));
@@ -28,82 +43,122 @@ db.once("open", function () {
 
 ////////////////////////////// SCHEMA /////////////////////////////////////
 
-const userSchema = new mongoose.Schema ({
+const userSchema = new mongoose.Schema({
   first: String,
   last: String,
   email: String,
-  password: String
+  password: String,
+  secret: String
 });
 
-//////////////////// ENCRYPTION PART ///////////////////////////////
-
-const secret = process.env.SECRET;
-userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"]});
+userSchema.plugin(passportLocalMongoose);
 
 ///////////////////////// REGISTER //////////////////////////////////////////
 
-const User = new mongoose.model('User', userSchema);
+const User = new mongoose.model("User", userSchema);
 
-app.post("/register", function(req,res){
-  const newUser = new User({
-    first: req.body.firstName,
-    last: req.body.lastName,
-    email: req.body.username,
-    password: req.body.password
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+////////////////////////////// ROUTES /////////////////////////////////
+
+app.get("/", function (req, res) {
+  res.render("home");
+});
+
+app.get("/register", function (req, res) {
+  res.render("register");
+});
+
+app.get("/login", function (req, res) {
+  res.render("login");
+});
+
+app.get("/secrets", (req,res)=>{
+  if(req.isAuthenticated()){
+      User.find({"secret" : {$ne:null}}, function(err,foundUser){
+          if(err){
+              console.log(err);
+          }else{
+              if(foundUser){
+                  res.render("secrets",{
+                      usersWithSecrets: foundUser
+                  })
+              }
+          }
+      })
+  }
+  else{
+    res.redirect("/login");
+  }
+})
+app.get("/submit", (req,res)=>{
+  if(req.isAuthenticated()){
+    res.render("submit")
+  }
+  else{
+    res.redirect("/login");
+  }
+})
+app.post("/submit", (req,res)=>{
+  const secretSubmitted = req.body.secret;
+  const currUser = req.user._id; //we get the current users data from req.user
+
+  User.findById(currUser, function(err, foundUser){
+    if(err){
+      console.log(err);
+    }
+    else{
+      if(foundUser){
+        foundUser.secret = secretSubmitted;
+        foundUser.save(function(){
+          res.redirect("/secrets");
+        })
+      }
+    }
   })
 
+})
 
+app.get("/logout", (req,res)=>{
+  req.logout();
+  res.redirect("/");
+})
 
-  newUser.save(function(err){
-    if (err) {
-console.log(err);
-    } else {
-res.render("secrets");
-    }
-  });
-});
-
-//////////////////////// AUTHENTICATION PART /////////////////////////////////////
-
-app.post("/login", function(req,res){
-  const username = req.body.username;
-  const password = req.body.password;
-
-  User.findOne({email: username},function(err, foundUser){
-    if (err) {
+app.post("/register", (req,res)=>{
+  User.register({username: req.body.username}, req.body.password, (err,user)=>{
+    if(err){
       console.log(err);
-    } else {
-      if(foundUser){
-        if(foundUser.password === password){
-          res.render("secrets");
-        }
-        else{
-          res.send("Wrong Password! Please enter correct password.");
-        }
-      }
-      else{
-        res.send("User not found. Register First.");
-      }
+      res.redirect("/register");
     }
-  });
-});
+    else{
+      passport.authenticate("local")(req,res,function(){
+        res.redirect("/secrets");
+      })
+    }
+  })
+})
+
+app.post("/login", (req,res)=>{
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password
+  })
+  req.login(user, function(err){
+    if(err){
+      console.log(err);
+    }
+    else{
+      passport.authenticate("local")(req,res, function(){
+        res.redirect("/secrets");
+      })
+    }
+  })
+})
 
 /////////////////////////////////////////////////////////////////////
 
-app.get("/", function(req,res){
-  res.render("home");
-})
-
-app.get("/register", function(req,res){
-  res.render("register");
-})
-
-app.get("/login", function(req,res){
-  res.render("login");
-})
-
-/////////////////////////////////////////////////////////////////////
-
-app.listen(3000, function(){
+app.listen(3000, function () {
   console.log("Server is running on port 3000.");
 });
