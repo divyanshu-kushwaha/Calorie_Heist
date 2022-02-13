@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+
+<div class="jumbotron text-center">
+  <div class="container">
+
+    <h4>This is your personal Dashboard</h4>
+    <hr>
+    <br>
+    <p class="alert alert-info">Name : <%=currentUserObj.first+" "+currentUserObj.last%></p>
+    <p class="alert alert-info">Email : <%=currentUserObj.username%></p>
+    <a class="btn btn-light" href="/logout" role="button">Log Out</a>
+    <a class="btn btn-primary" href="/bmi" role="button">BMI</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
