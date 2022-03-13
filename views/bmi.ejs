@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css">
+    <title>BMR</title>
+  </head>
+  <body style="background-position: center; background-repeat: no-repeat; background-size: cover;">
+
+
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">login</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href=".container my-5">Home</a>
+            </li>
+            <li><a href="#"><img src="person-circle.svg" alt="Persons" width="32" height="32"></a>
+          </ul>
+        </div>
+      </div>
+    </nav> -->
+
+    <h1 align="center">BMI and CALORIE INFO.</h1>
+    <hr>
+
+  <div class="container my-5">
+      <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+        <div class="col-lg-5 p-3 p-lg-5 pt-lg-3">
+          <h1 class="display-4 fw-bold lh-1">BMR</h1>
+          <p class="lead">Basal metabolic rate (BMR) is the total number of calories that your body needs to perform basic, life-sustaining functions while at rest.</p>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+          </div>
+        </div>
+        <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+          <div class="px-4 py-5 my-5 text-center">
+          <h1 class="display-5 fw-bold">CALCULATE</h1>
+          <div class="col-lg-6 mx-auto">
+
+            <form action="/" method="post" class ="mb-3">
+              <label for="age" class="form-label">Enter your age</label>
+              <input type="text" name="age"><br>
+              Enter your gender:<br>
+              <label for="sex" class="form-label">Male</label>
+              <input type="radio" id="gender" value="male" checked name="sex">
+
+              <label for="sex" class="form-label">Female</label>
+              <input type="radio" id="gender" value="female" name="sex"><br>
+              <label for="height" class="form-label">Enter your height</label>
+              <input type="text" name="height"><br>
+              <label for="weight" class="form-label">Enter your weight/</label>
+              <input type="text" name="weight"><br>
+              <label for="activity" class="form-label">Enter you activity during the day.</label>
+              <select class="form-select" aria-label="Default select example" name="activity">
+              <option value="1.2" selected>Sedentary</option>
+              <option value="1.375" >Light exercise</option>
+              <option value="1.465">Moderate exercise</option>
+              <option value="1.55" >daily exercise</option>
+              <option value="1.725" >Very Active exercise</option>
+              <option value="1.9" >Extra Active exercise</option>
+            </select><br>
+            <button type="submit" name="submit">SUBMIT</button>
+            <label for="result">Your calorie requirement:</label>
+            <output name="result" ><%= cal %></output>
+            </form>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="container my-5">
+        <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+          <div class="col-lg-5 p-3 p-lg-5 pt-lg-3">
+            <h1 class="display-4 fw-bold lh-1">BMI</h1>
+            <p class="lead">Body Mass Index (BMI) is a person's weight in kilograms divided by the square of height in meters. A high BMI can indicate high body fatness.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+            </div>
+          </div>
+          <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+            <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold">CALCULATE</h1>
+            <div class="col-lg-6 mx-auto">
+
+              <form action="/" method="post" class ="mb-3">
+                <label for="height" class="form-label">Enter your height</label>
+                <input type="text" name="height1"><br>
+                <label for="weight" class="form-label">Enter your weight/</label>
+                <input type="text" name="weight1"><br>
+                <br>
+              <button type="submit" name="submit">SUBMIT</button>
+              <label for="result">Your BMI:</label>
+              <output name="result" ><%= bmi %></output>
+              </form>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container my-5">
+          <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+            <div class="col-lg-5 p-3 p-lg-5 pt-lg-3">
+              <h1 class="display-4 fw-bold lh-1">NUTRIENTS INFORMATION</h1>
+              <p class="lead"></p>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+              </div>
+            </div>
+            <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+              <div class="px-4 py-5 my-5 text-center">
+              <h1 class="display-5 fw-bold">CALCULATE</h1>
+              <div class="col-lg-6 mx-auto">
+
+                <form action="/" method="post" class ="mb-3">
+                  <label for="height" class="form-label">Enter your food</label>
+                  <input type="text" name="food"><br>
+                <button type="submit" name="submit">SUBMIT</button>
+                <label for="result">Your calorie value is :</label>
+                <output name="result"><%= nutrient %></output>
+                </form>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+<br><br><br><br><br><br>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+</body>
+</html>
