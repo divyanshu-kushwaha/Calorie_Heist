@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema({
   secret: String
 });
 
+const dietSchema = new mongoose.Schema({
+  date: String,
+  calorie: Number
+});
+
 userSchema.plugin(passportLocalMongoose);
 
 ///////////////////////// PASSPORT //////////////////////////////////////////
@@ -134,52 +139,6 @@ app.get("/profile/:currentUser", (req,res)=>{
     })
 })
 
-var calorie=0;
-var bmi=0;
-var nutrient=0;
-
-app.get("/bmi", function(req, res) {
-  res.render("bmi" , {cal:calorie , bmi:bmi, nutrient:nutrient});
-});
-
-app.post("/bmi" , function(req,res){
-    var weight = parseFloat(req.body.weight);
-    var height = parseFloat(req.body.height);
-    var weight1 = parseFloat(req.body.weight1);
-    var height1 = parseFloat(req.body.height1);
-    var age = parseFloat(req.body.age);
-    var gender = req.body.sex;
-    var k = parseFloat(req.body.activity);
-    var result
-    var result1 = weight1 / (height1/100 * height1/100);
-    if(gender == "male"){
-      result = 10*weight + 6.25*height - 5*k +5
-    }
-
-    else result = 10*weight + 6.25*height - 5*k - 161
-    calorie = Math.floor(result)
-    bmi = result1;
-
-    //API part
-    var food = req.body.food;
-    var API_KEY = process.env.API_KEY;
-    const url = "https://api.spoonacular.com/recipes/complexSearch?query=" + food + "&apiKey=" + API_KEY + "&number=1&addRecipeNutrition=true";
-    https.get(url, function (response) {
-      console.log(response.statusCode);
-      var chunks = [];
-        response.on("data", function (chunk) {
-          chunks.push(chunk);
-        });
-        response.on("end", function (chunk) {
-          var body = Buffer.concat(chunks);
-          var data = JSON.parse(body);
-          var result2 = Math.floor(data.results[0].nutrition.nutrients[0].amount);
-          nutrient = result2
-    });
-    })
-    res.redirect("/bmi");
-});
-
 app.get("/logout", (req,res)=>{
   req.logout();
   res.redirect("/");
@@ -187,6 +146,9 @@ app.get("/logout", (req,res)=>{
 
 app.post("/register", (req,res)=>{
     //storing info during registration
+
+    const Diet = new mongoose.model(req.body.username, dietSchema);
+
     const newUser = new User({
         first: req.body.firstName,
         last: req.body.lastName,
@@ -250,11 +212,47 @@ app.post("/bmi" , function(req,res){
     calorie = Math.floor(result)
     bmi = result1;
 
+    // //API part
+    // var food = req.body.food;
+    // var API_KEY = process.env.API_KEY;
+    // const url = "https://api.spoonacular.com/recipes/complexSearch?query=" + food + "&apiKey=" + API_KEY + "&number=1&addRecipeNutrition=true";
+    // https.get(url, function (response) {
+    //   console.log(response.statusCode);
+    //   var chunks = [];
+    //     response.on("data", function (chunk) {
+    //       chunks.push(chunk);
+    //     });
+    //     response.on("end", function (chunk) {
+    //       var body = Buffer.concat(chunks);
+    //       var data = JSON.parse(body);
+    //       var result2 = Math.floor(data.results[0].nutrition.nutrients[0].amount);
+    //       nutrient = result2
+    // });
+    // })
+    res.redirect("/bmi");
+});
+
+var nutrients=0;
+
+app.get("/meal", function(req, res) {
+  res.render("meal" , {nutrients:nutrients});
+});
+
+app.post("/meal" , function(req,res){
+  var currUserObject = req.user;
+
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  today = mm + '/' + dd + '/' + yyyy;
     //API part
     var food = req.body.food;
     var API_KEY = process.env.API_KEY;
-    const url = "https://api.spoonacular.com/recipes/complexSearch?query=" + food + "&apiKey=" + API_KEY + "&number=1&addRecipeNutrition=true";
-    https.get(url, function (response) {
+    const url1 = "https://api.spoonacular.com/recipes/complexSearch?query=" + food + "&apiKey=" + API_KEY + "&number=1&addRecipeNutrition=true";
+
+    //HTTPS get
+    https.get(url1, function (response) {
       console.log(response.statusCode);
       var chunks = [];
         response.on("data", function (chunk) {
@@ -264,12 +262,38 @@ app.post("/bmi" , function(req,res){
           var body = Buffer.concat(chunks);
           var data = JSON.parse(body);
           var result2 = Math.floor(data.results[0].nutrition.nutrients[0].amount);
-          nutrient = result2
+          nutrients = result2
     });
     })
-    res.redirect("/bmi");
+    // const col = currUserObject.username;
+    var day = mongoose.model(currUserObject.username,dietSchema);
+    var day1 = mongoose.model(currUserObject.username);
+    day1.findOne({date:today} , function(err,result){
+      if(err){
+        console.log(err);
+      }
+      else if(result == null){
+        const newDate = new day({
+            date: today,
+            calorie: nutrients
+        });
+        newDate.save();
+      }
+      else{
+        var num = result.calorie;
+        day1.updateOne({date:today},
+    {calorie:num+nutrients}, function (err, docs) {
+    if (err){
+        console.log(err)
+    }
+    else{
+        console.log("update succesfull");
+    }
 });
-
+      }
+    })
+    res.redirect("/meal");
+});
 
 /////////////////////////////PORT////////////////////////////////////
 
