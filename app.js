@@ -81,53 +81,53 @@ app.get("/login", function (req, res) {
   res.render("login");
 });
 
-app.get("/secrets", (req,res)=>{
-  if(req.isAuthenticated()){
-      User.find({"secret" : {$ne:null}}, function(err,foundUser){
-          if(err){
-              console.log(err);
-          }else{
-              if(foundUser){
-                  res.render("secrets",{
-                      usersWithSecrets: foundUser,
-                      currentUser: req.user.username
-                  })
-              }
-          }
-      })
-  }
-  else{
-    res.redirect("/login");
-  }
-})
+// app.get("/secrets", (req,res)=>{
+//   if(req.isAuthenticated()){
+//       User.find({"secret" : {$ne:null}}, function(err,foundUser){
+//           if(err){
+//               console.log(err);
+//           }else{
+//               if(foundUser){
+//                   res.render("secrets",{
+//                       usersWithSecrets: foundUser,
+//                       currentUser: req.user.username
+//                   })
+//               }
+//           }
+//       })
+//   }
+//   else{
+//     res.redirect("/login");
+//   }
+// })
 
-app.get("/submit", (req,res)=>{
-  if(req.isAuthenticated()){
-    res.render("submit")
-  }
-  else{
-    res.redirect("/login");
-  }
-})
+// app.get("/submit", (req,res)=>{
+//   if(req.isAuthenticated()){
+//     res.render("submit")
+//   }
+//   else{
+//     res.redirect("/login");
+//   }
+// })
 
-app.post("/submit", (req,res)=>{
-  const secretSubmitted = req.body.secret;
-  const currUser = req.user._id; //we get the current users data from req.user
-
-  User.findById(currUser, function(err, foundUser){
-    if(err){
-      console.log(err);
-    }
-    else{
-      if(foundUser){
-        foundUser.secret = secretSubmitted;
-        foundUser.save(function(){
-          res.redirect("/secrets");
-        })
-      }
-    }
-  })
-})
+// app.post("/submit", (req,res)=>{
+//   const secretSubmitted = req.body.secret;
+//   const currUser = req.user._id; //we get the current users data from req.user
+//
+//   User.findById(currUser, function(err, foundUser){
+//     if(err){
+//       console.log(err);
+//     }
+//     else{
+//       if(foundUser){
+//         foundUser.secret = secretSubmitted;
+//         foundUser.save(function(){
+//           res.redirect("/secrets");
+//         })
+//       }
+//     }
+//   })
+// })
 
 // dynamic page for each profile
 app.get("/profile/:currentUser", (req,res)=>{
@@ -163,7 +163,7 @@ app.post("/register", (req,res)=>{
     }
     else{
       passport.authenticate("local")(req,res,function(){
-        res.redirect("/secrets");
+        res.redirect("/profile" + req.user.username);
       })
     }
   })
@@ -180,7 +180,7 @@ app.post("/login", (req,res)=>{
     }
     else{
       passport.authenticate("local")(req,res, function(){
-        res.redirect("/secrets");
+        res.redirect("/profile/" + req.user.username);
       })
     }
   })
@@ -211,24 +211,6 @@ app.post("/bmi" , function(req,res){
     else result = 10*weight + 6.25*height - 5*k - 161
     calorie = Math.floor(result)
     bmi = result1;
-
-    // //API part
-    // var food = req.body.food;
-    // var API_KEY = process.env.API_KEY;
-    // const url = "https://api.spoonacular.com/recipes/complexSearch?query=" + food + "&apiKey=" + API_KEY + "&number=1&addRecipeNutrition=true";
-    // https.get(url, function (response) {
-    //   console.log(response.statusCode);
-    //   var chunks = [];
-    //     response.on("data", function (chunk) {
-    //       chunks.push(chunk);
-    //     });
-    //     response.on("end", function (chunk) {
-    //       var body = Buffer.concat(chunks);
-    //       var data = JSON.parse(body);
-    //       var result2 = Math.floor(data.results[0].nutrition.nutrients[0].amount);
-    //       nutrient = result2
-    // });
-    // })
     res.redirect("/bmi");
 });
 
@@ -287,7 +269,7 @@ app.post("/meal" , function(req,res){
         console.log(err)
     }
     else{
-        console.log("update succesfull");
+        console.log("Updated successfullyful");
     }
 });
       }
@@ -297,6 +279,6 @@ app.post("/meal" , function(req,res){
 
 /////////////////////////////PORT////////////////////////////////////
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
   console.log("Server is running on port 3000.");
 });
