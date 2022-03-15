@@ -82,6 +82,7 @@ app.get("/login", function (req, res) {
   res.render("login");
 });
 
+
 // dynamic page for each profile
 app.get("/profile/:currentUser", (req,res)=>{
     // console.log(req.user);
@@ -113,7 +114,6 @@ app.post("/register", (req,res)=>{
     }
     else{
       passport.authenticate("local")(req,res,function(){
-        res.redirect("/update");
       })
     }
   })
@@ -130,7 +130,7 @@ app.post("/login", (req,res)=>{
     }
     else{
       passport.authenticate("local")(req,res, function(){
-      res.redirect("/profile/" + req.user.username);
+
       })
     }
   })
@@ -248,7 +248,6 @@ app.post("/meal" , function(req,res){
         console.log(err)
     }
     else{
-        console.log("Updated successfully");
     }
 });
       }
