@@ -9,6 +9,8 @@ const ejs = require("ejs");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const bmiRoute = require('./routes/bmi');
+const mealRoute = require('./routes/meal');
 
 const app = express();
 
@@ -75,6 +77,9 @@ passport.deserializeUser(User.deserializeUser());
 
 ////////////////////////////// ROUTES /////////////////////////////////
 
+app.use('/bmi', bmiRoute.router);
+app.use('/meal', mealRoute);
+
 app.get("/", function(req, res) {
     res.render("home");
 });
@@ -104,7 +109,7 @@ app.get("/logout", (req, res) => {
 app.post("/register", (req, res) => {
     //storing info during registration
 
-    const Diet = new mongoose.model(req.body.username, dietSchema);
+    // const Diet = new mongoose.model(req.body.username, dietSchema);
 
     const newUser = new User({
         first: req.body.firstName,
@@ -141,48 +146,9 @@ app.post("/login", (req, res) => {
     });
 });
 
-var calorie = 0;
-var bmi = 0;
 
+//BMI
 
-// functions for calculating bmi and required cal intake
-function calculateBMI(weight, height) {
-    var result = weight / (((height / 100) * height) / 100);
-    result = Math.round((result + Number.EPSILON) * 100) / 100
-    return result;
-}
-
-function calculateBMR(weight, height, gender, k) {
-    var result;
-    if (gender == "male") {
-        result = 10 * weight + 6.25 * height - 5 * k + 5;
-    } else {
-        result = 10 * weight + 6.25 * height - 5 * k - 161;
-    }
-    return result;
-}
-
-app.get("/bmi", function(req, res) {
-    res.render("bmi", {
-        cal: calorie,
-        bmi: bmi
-    });
-});
-
-app.post("/bmi", function(req, res) {
-    var weight = parseFloat(req.body.weight);
-    var height = parseFloat(req.body.height);
-    var weight1 = parseFloat(req.body.weight1);
-    var height1 = parseFloat(req.body.height1);
-    var age = parseFloat(req.body.age);
-    var gender = req.body.sex;
-    var k = parseFloat(req.body.activity);
-
-    calorie = Math.floor(calculateBMR(weight, height, gender, k));
-    bmi = calculateBMI(weight1, height1);
-
-    res.redirect("/bmi");
-});
 
 app.get("/update", function(req, res) {
     if (req.isAuthenticated()) {
@@ -213,9 +179,9 @@ app.post("/update", function(req, res) {
     var k = parseFloat(req.body.activity);
     var m = parseFloat(req.body.aim);
 
-    var bmr = calculateBMR(weight, height, gender, k) + m;
+    var bmr = bmiRoute.calculateBMR(weight, height, gender, k) + m;
     var ans = Math.floor(bmr);
-    var bmi = calculateBMI(weight, height);
+    var bmi = bmiRoute.calculateBMI(weight, height);
 
     User.findById(currUserObj._id, function(err, foundUser){
       if(err){
@@ -240,76 +206,8 @@ app.post("/update", function(req, res) {
 
 });
 
-var nutrients = 0;
 
-app.get("/meal", function(req, res) {
-    res.render("meal", {
-        nutrients: nutrients
-    });
-});
 
-app.post("/meal", function(req, res) {
-    var currUserObject = req.user;
-
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    var yyyy = today.getFullYear();
-    today = mm + "/" + dd + "/" + yyyy;
-    //API part
-    var food = req.body.food;
-    var API_KEY = process.env.API_KEY;
-    const url1 =
-        "https://api.spoonacular.com/recipes/complexSearch?query=" +
-        food +
-        "&apiKey=" +
-        API_KEY +
-        "&number=1&addRecipeNutrition=true";
-
-    //HTTPS get
-    https.get(url1, function(response) {
-        console.log(response.statusCode);
-        var chunks = [];
-        response.on("data", function(chunk) {
-            chunks.push(chunk);
-        });
-        response.on("end", function(chunk) {
-            var body = Buffer.concat(chunks);
-            var data = JSON.parse(body);
-            var result2 = Math.floor(data.results[0].nutrition.nutrients[0].amount);
-            nutrients = result2;
-        });
-    });
-    var day = mongoose.model(currUserObject.username, dietSchema);
-    var day1 = mongoose.model(currUserObject.username);
-    day1.findOne({
-        date: today
-    }, function(err, result) {
-        if (err) {
-            console.log(err);
-        } else if (result == null) {
-            const newDate = new day({
-                date: today,
-                calorie: nutrients,
-            });
-            newDate.save();
-        } else {
-            var num = result.calorie;
-            day1.updateOne({
-                    date: today
-                }, {
-                    calorie: num + nutrients
-                },
-                function(err, docs) {
-                    if (err) {
-                        console.log(err);
-                    } else {}
-                }
-            );
-        }
-    });
-    res.redirect("/meal");
-});
 
 /////////////////////////////PORT////////////////////////////////////
 

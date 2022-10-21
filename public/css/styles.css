@@ -1,7 +1,35 @@
 
 body {
-  background-color: #E8ECEF;
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, #333399 ,rgb(223, 154, 154), #e02e43);
+  display:flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.home{
+  background: rgba(234, 220, 220, .5);
+  padding: 4rem;
+  margin-top: 20px;
+  position: relative;
+  border-radius: 10px;
+  
+}
+
+
+.home-logo {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reg-login-btn {
+  display:flex;
+  align-items: center;
+  padding: 5px;
+  justify-content: center;
+}
+
 
 .centered {
     padding-top: 200px;
