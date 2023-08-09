@@ -6,11 +6,13 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const https = require("https");
 const ejs = require("ejs");
+const request = require("request");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const bmiRoute = require('./routes/bmi');
 const mealRoute = require('./routes/meal');
+const { log } = require("console");
 
 const app = express();
 
@@ -60,10 +62,64 @@ const userSchema = new mongoose.Schema({
     gender: String
 });
 
-const dietSchema = new mongoose.Schema({
-    date: String,
-    calorie: Number,
-});
+const mealSchema = new mongoose.Schema({
+    date: {
+      type: String,
+      required: true,
+    },
+    calorie: {
+      type: Number,
+      default: 0.0,
+    },
+    fat: {
+      type: Number,
+      default: 0.0,
+    },
+    saturated_fat: {
+      type: Number,
+      default: 0.0,
+    },
+    protein: {
+      type: Number,
+      default: 0.0,
+    },
+    sodium: {
+      type: Number,
+      default: 0.0,
+    },
+    calorie: {
+      type: Number,
+      default: 0.0,
+    },
+    potassium: {
+      type: Number,
+      default: 0.0,
+    },
+    sodium: {
+      type: Number,
+      default: 0.0,
+    },
+    potassium: {
+      type: Number,
+      default: 0.0,
+    },
+    cholestrol: {
+      type: Number,
+      default: 0.0,
+    },
+    carbohydrates: {
+      type: Number,
+      default: 0.0,
+    },
+    fiber: {
+      type: Number,
+      default: 0.0,
+    },
+    sugar: {
+      type: Number,
+      default: 0.0,
+    }
+  });
 
 userSchema.plugin(passportLocalMongoose);
 
@@ -78,7 +134,88 @@ passport.deserializeUser(User.deserializeUser());
 ////////////////////////////// ROUTES /////////////////////////////////
 
 app.use('/bmi', bmiRoute.router);
-app.use('/meal', mealRoute);
+app.get("/meal", function (req, res) {
+    res.render('meal', { foodItemList: null });
+});
+app.post('/meal', function(req, res) {
+    const food = req.body.food;
+    var currUserObject = req.user
+    const API_KEY = process.env.API_KEY;
+    request.get(
+        {
+            url: "https://api.calorieninjas.com/v1/nutrition?query=" + food,
+            headers: {
+                "X-Api-Key": API_KEY,
+            },
+        },
+        function (error, response, body) {
+            if (error) return console.error("Request failed:", error);
+            else if (response.statusCode !== 200)
+                return console.error(
+                    "Error:",
+                    response.statusCode,
+                    body.toString("utf8")
+                );
+            else {
+                const foodItemList = JSON.parse(body).items;
+                res.render('meal', { foodItemList });
+            }
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            today = mm + '/' + dd + '/' + yyyy;
+
+            var userMeal = mongoose.model(currUserObject, mealSchema);
+            userMeal.findOne({ date: today }, function (err, result) {
+                if (err) {
+                    console.log(err);
+                }
+                else if (result == null) {
+                    const newDate = new userMeal({
+                        date: today,
+                        calorie: foodItemList.calorie,
+                        fat: foodItemList.fat,
+                        saturated_fat: foodItemList.saturated_fat,
+                        protein: foodItemList.protein,
+                        calorie: foodItemList.calorie,
+                        potassium: foodItemList.potassium,
+                        sodium: foodItemList.sodium,
+                        cholestrol: foodItemList.cholestrol,
+                        carbohydrates: foodItemList.carbohydrates,
+                        fiber: foodItemList.fiber,
+                        sugar: foodItemList.sugar,
+                    });
+                    newDate.save();
+                }
+                else {
+                    var num = result.calorie;
+                    day1.updateOne({ date: today },
+                        {
+                            calorie: num + nutrients,
+                            fat: result.fat + foodItemList.fat,
+                            saturated_fat: result.saturated_fat + foodItemList.saturated_fat,
+                            protein: result.protein + foodItemList.protein,
+                            calorie: result.calorie + foodItemList.calorie,
+                            potassium: result.potassium + foodItemList.potassium,
+                            sodium: result.sodium + foodItemList.sodium,
+                            cholestrol: result.cholestrol + foodItemList.cholestrol,
+                            carbohydrates: result.carbohydrates + foodItemList.carbohydrates,
+                            fiber: result.fiber + foodItemList.fiber,
+                            sugar: result.sugar + foodItemList.sugar
+                        }, function (err, docs) {
+                            if (err) {
+                                console.log(err)
+                            }
+                            else {
+                                console.log("Updated successfullyful");
+                            }
+                        });
+                }
+            });
+        }
+    );
+})
 
 app.get("/", function(req, res) {
     res.render("home");
@@ -128,6 +265,7 @@ app.post("/register", (req, res) => {
             });
         }
     });
+    const userMeal = mongoose.model(req.body.username, mealSchema);
 });
 
 app.post("/login", (req, res) => {
