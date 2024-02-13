@@ -6,8 +6,8 @@ const https = require("https");
 const passport = require("passport");
 const bodyParser = require("body-parser");
 
-router.get("/", function (req, res){
-    res.render('meal', { foodItemList: null }); // Initialize jsonData with null
+router.get("/", function (req, res) {
+    res.render("meal", { foodItemList: null }); // Initialize jsonData with null
 });
 
 router.post("/", function (req, res) {
@@ -28,10 +28,10 @@ router.post("/", function (req, res) {
                     response.statusCode,
                     body.toString("utf8")
                 );
-                else {
-                    const foodItemList = JSON.parse(body).items; // Parse the JSON response
-                    res.render('meal', { foodItemList }); // Render meal.ejs with jsonData
-                }
+            else {
+                const foodItemList = JSON.parse(body).items; // Parse the JSON response
+                res.render("meal", { foodItemList }); // Render meal.ejs with jsonData
+            }
         }
     );
 });
