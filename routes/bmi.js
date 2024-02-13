@@ -1,50 +1,48 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-var calorie = 0;
-var bmi = 0;
-
-// functions for calculating bmi and required cal intake
+// Functions for calculating BMI and required caloric intake
 function calculateBMI(weight, height) {
-    var result = weight / (((height / 100) * height) / 100);
-    result = Math.round((result + Number.EPSILON) * 100) / 100
-    return result;
+    const result = weight / (((height / 100) * height) / 100);
+    return Math.round(result * 100) / 100;
 }
 
-function calculateBMR(weight, height, gender, k) {
-    var result;
-    if (gender == "male") {
-        result = 10 * weight + 6.25 * height - 5 * k + 5;
+function calculateBMR(weight, height, gender, activity) {
+    let result;
+    if (gender === "male") {
+        result = 10 * weight + 6.25 * height - 5 * activity + 5;
     } else {
-        result = 10 * weight + 6.25 * height - 5 * k - 161;
+        result = 10 * weight + 6.25 * height - 5 * activity - 161;
     }
     return result;
 }
 
-router.get("/", function(req, res) {
+router.get("/", (req, res) => {
     res.render("bmi", {
-        cal: calorie,
-        bmi: bmi
+        cal: req.session.calorie || 0,
+        bmi: req.session.bmi || 0,
     });
 });
 
-router.post("/", function(req, res) {
-    var weight = parseFloat(req.body.weight);
-    var height = parseFloat(req.body.height);
-    var weight1 = parseFloat(req.body.weight1);
-    var height1 = parseFloat(req.body.height1);
-    var age = parseFloat(req.body.age);
-    var gender = req.body.sex;
-    var k = parseFloat(req.body.activity);
+router.post("/", (req, res) => {
+    const weight = parseFloat(req.body.weight);
+    const height = parseFloat(req.body.height);
+    const age = parseFloat(req.body.age);
+    const gender = req.body.sex;
+    const activity = parseFloat(req.body.activity);
 
-    calorie = Math.floor(calculateBMR(weight, height, gender, k));
-    bmi = calculateBMI(weight1, height1);
+    const calorie = Math.floor(calculateBMR(weight, height, gender, activity));
+    const bmi = calculateBMI(weight, height);
+
+    req.session.calorie = calorie;
+    req.session.bmi = bmi;
 
     res.redirect("/bmi");
 });
 
+// Exporting router and functions
 module.exports = {
     router: router,
     calculateBMI: calculateBMI,
-    calculateBMR: calculateBMR
-}
+    calculateBMR: calculateBMR,
+};
