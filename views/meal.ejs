@@ -1,55 +1,62 @@
-<!-- meal.ejs -->
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Food Item Input and JSON Table</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background: linear-gradient(90deg, #6868b5 ,rgb(223, 154, 154), #df6271);
-        }
-    </style>
+  <title>Food Item Input and JSON Table</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(90deg, #6868b5, rgb(223, 154, 154), #df6271);
+    }
+  </style>
 </head>
+
 <body>
+
   <div class="container mt-4">
     <h2>Food Item Input</h2>
+    <div>
+      <img src="/images/foodlogo.png" alt="" width="100" height="100" />
+    </div>
     <form action="/meal" method="POST" id="foodForm">
       <div class="form-group">
         <label for="foodItem">Enter Food Item:</label>
         <input type="text" name="food" class="form-control" id="foodItem" placeholder="e.g. 2 Apples, 1 Banana">
       </div>
       <button type="submit" class="btn btn-primary">Get Nutrients</button>
+      <a class="btn btn-light" href="/user/logout" role="button">Log Out</a>
     </form>
   </div>
-  
+
   <br>
   <br>
   <% if (foodItemList) { %>
     <h2 class="text-center mt-4">Nutrients Table</h2>
     <br>
     <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 20px;
-        }
-      
-        th, td {
-          padding: 8px;
-          text-align: center;
-          border: 1px solid #0c0c0c;
-        }
-      
-        th {
-          background-color: #f7f2f279;
-          font-weight: bold;
-        }
-      </style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #0c0c0c;
+      }
+
+      th {
+        background-color: #f7f2f279;
+        font-weight: bold;
+      }
+    </style>
     <div class="table-responsive mx-auto" style="max-width: 1100px;">
-    <table class="table table-bordered table-striped text-center">
+      <table class="table table-bordered table-striped text-center">
         <thead>
-        <tr>
+          <tr>
             <th>Name</th>
             <th>Calories</th>
             <th>Serving Size (g)</th>
@@ -62,29 +69,54 @@
             <th>Carbohydrates (g)</th>
             <th>Fiber (g)</th>
             <th>Sugar (g)</th>
-        </tr>
+          </tr>
         </thead>
         <tbody>
-        <% foodItemList.forEach((foodItem) =>{ %>
+          <% foodItemList.forEach((foodItem)=>{ %>
             <tr>
-            <td><%= foodItem.name %></td>
-            <td><%= foodItem.calories %></td>
-            <td><%= foodItem.serving_size_g %></td>
-            <td><%= foodItem.fat_total_g %></td>
-            <td><%= foodItem.fat_saturated_g %></td>
-            <td><%= foodItem.protein_g %></td>
-            <td><%= foodItem.sodium_mg %></td>
-            <td><%= foodItem.potassium_mg %></td>
-            <td><%= foodItem.cholesterol_mg %></td>
-            <td><%= foodItem.carbohydrates_total_g %></td>
-            <td><%= foodItem.fiber_g %></td>
-            <td><%= foodItem.sugar_g %></td>
+              <td>
+                <%= foodItem.name %>
+              </td>
+              <td>
+                <%= foodItem.calories %>
+              </td>
+              <td>
+                <%= foodItem.serving_size_g %>
+              </td>
+              <td>
+                <%= foodItem.fat_total_g %>
+              </td>
+              <td>
+                <%= foodItem.fat_saturated_g %>
+              </td>
+              <td>
+                <%= foodItem.protein_g %>
+              </td>
+              <td>
+                <%= foodItem.sodium_mg %>
+              </td>
+              <td>
+                <%= foodItem.potassium_mg %>
+              </td>
+              <td>
+                <%= foodItem.cholesterol_mg %>
+              </td>
+              <td>
+                <%= foodItem.carbohydrates_total_g %>
+              </td>
+              <td>
+                <%= foodItem.fiber_g %>
+              </td>
+              <td>
+                <%= foodItem.sugar_g %>
+              </td>
             </tr>
-        <% })%>
+            <% })%>
         </tbody>
-    </table>
+      </table>
     </div>
     <% } %>
 
 </body>
+
 </html>
