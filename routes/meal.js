@@ -7,7 +7,7 @@ const passport = require("passport");
 const bodyParser = require("body-parser");
 
 router.get("/", function (req, res) {
-    res.render("meal", { foodItemList: null }); // Initialize jsonData with null
+    res.render("meal", { foodItemList: null, loggedIn: req.isAuthenticated() }); // Initialize jsonData with null
 });
 
 router.post("/", function (req, res) {
@@ -30,7 +30,7 @@ router.post("/", function (req, res) {
                 );
             else {
                 const foodItemList = JSON.parse(body).items; // Parse the JSON response
-                res.render("meal", { foodItemList }); // Render meal.ejs with jsonData
+                res.render("meal", { foodItemList, loggedIn: req.isAuthenticated() }); // Render meal.ejs with jsonData
             }
         }
     );

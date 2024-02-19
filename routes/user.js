@@ -6,7 +6,9 @@ const bmiRoute = require("./bmi");
 
 // Register Route
 router.get("/register", function (req, res) {
-    res.render("register");
+    res.render("register",{
+        loggedIn: req.isAuthenticated()
+    });
 });
 
 router.post("/register", (req, res) => {
@@ -31,7 +33,9 @@ router.post("/register", (req, res) => {
 // Login Route
 
 router.get("/login", function (req, res) {
-    res.render("login");
+    res.render("login",{
+        loggedIn: req.isAuthenticated()
+    });
 });
 router.post("/login", (req, res) => {
     const user = new User({
@@ -43,16 +47,22 @@ router.post("/login", (req, res) => {
             console.log(err);
         } else {
             passport.authenticate("local")(req, res, () => {
-                res.redirect("/user/profile/" + req.user.username);
+                res.redirect("/user/myprofile");
             });
         }
     });
 });
 
 // Profile Route
-router.get("/profile/:currentUser", (req, res) => {
-    const currUserObject = req.user;
-    res.render("dashboard", { currentUserObj: currUserObject });
+router.get("/myprofile", (req, res) => {
+    if(req.isAuthenticated()){
+        const currUserObject = req.user;
+        res.render("dashboard", { currentUserObj: currUserObject, loggedIn: req.isAuthenticated() });
+    }
+    else{
+        res.redirect("/user/register");
+    }
+    
 });
 
 // Logout Route
@@ -69,7 +79,9 @@ router.get("/update", (req, res) => {
                 console.log(err);
             } else {
                 if (foundUser) {
-                    res.render("update");
+                    res.render("update",{
+                        loggedIn: req.isAuthenticated()
+                    });
                 }
             }
         });
@@ -103,7 +115,7 @@ router.post("/update", (req, res) => {
                 foundUser.gender = gender;
 
                 foundUser.save(() => {
-                    res.redirect("/user/profile/" + currUserObj.username);
+                    res.redirect("/user/myprofile");
                 });
             }
         }

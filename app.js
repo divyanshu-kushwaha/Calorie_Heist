@@ -16,6 +16,7 @@ app.set("view engine", "ejs");
 
 // Import routes
 const bmiRoute = require("./routes/bmi");
+const bmrRoute = require("./routes/bmr");
 const mealRoute = require("./routes/meal");
 const userRoute = require("./routes/user");
 
@@ -34,12 +35,17 @@ app.use(passport.session());
 
 // Use routes
 app.use("/bmi", bmiRoute.router);
+app.use("/bmr", bmrRoute.router);
 app.use("/meal", mealRoute);
 app.use("/user", userRoute);
-
 // Home route
 app.get("/", (req, res) => {
-    res.render("home");
+    res.render("home", {
+        loggedIn: req.isAuthenticated(),
+    });
+});
+app.use((req, res, next) => {
+    res.render("404");
 });
 
 // Start server
