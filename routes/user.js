@@ -4,7 +4,6 @@ const passport = require("passport");
 const User = require("../models/user");
 const bmiRoute = require("./bmi");
 
-// Register Route
 router.get("/register", function (req, res) {
     res.render("register",{
         loggedIn: req.isAuthenticated()
@@ -31,7 +30,6 @@ router.post("/register", (req, res) => {
 });
 
 // Login Route
-
 router.get("/login", function (req, res) {
     res.render("login",{
         loggedIn: req.isAuthenticated()
@@ -74,7 +72,7 @@ router.get("/logout", (req, res) => {
 // Update Route
 router.get("/update", (req, res) => {
     if (req.isAuthenticated()) {
-        User.find({ secret: { $ne: null } }, (err, foundUser) => {
+        User.find((err, foundUser) => {
             if (err) {
                 console.log(err);
             } else {
@@ -94,7 +92,6 @@ router.post("/update", (req, res) => {
     const currUserObj = req.user;
     const weight = parseFloat(req.body.weight);
     const height = parseFloat(req.body.height);
-    const age = parseFloat(req.body.age);
     const gender = req.body.sex;
     const k = parseFloat(req.body.activity);
     const m = parseFloat(req.body.aim);

@@ -17,7 +17,7 @@ app.set("view engine", "ejs");
 // Import routes
 const bmiRoute = require("./routes/bmi");
 const bmrRoute = require("./routes/bmr");
-const mealRoute = require("./routes/meal");
+const nutrientsRoute = require("./routes/nutrients");
 const userRoute = require("./routes/user");
 
 // Session middleware
@@ -36,7 +36,7 @@ app.use(passport.session());
 // Use routes
 app.use("/bmi", bmiRoute.router);
 app.use("/bmr", bmrRoute.router);
-app.use("/meal", mealRoute);
+app.use("/nutrients", nutrientsRoute);
 app.use("/user", userRoute);
 // Home route
 app.get("/", (req, res) => {
