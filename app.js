@@ -19,6 +19,7 @@ const bmiRoute = require("./routes/bmi");
 const bmrRoute = require("./routes/bmr");
 const nutrientsRoute = require("./routes/nutrients");
 const userRoute = require("./routes/user");
+const reportRoute = require("./routes/report");
 
 // Session middleware
 app.use(
@@ -38,6 +39,8 @@ app.use("/bmi", bmiRoute.router);
 app.use("/bmr", bmrRoute.router);
 app.use("/nutrients", nutrientsRoute);
 app.use("/user", userRoute);
+app.use("/report", reportRoute);
+
 // Home route
 app.get("/", (req, res) => {
     res.render("home", {

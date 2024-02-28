@@ -17,6 +17,12 @@ body {
     background-color: #ffffff73;
 }
 
+.mainpic{
+    margin-top: 110px;
+    margin-left:-80px;
+    margin-right: 180px;
+}
+
 .home-logo {
     display: flex;
     align-items: center;

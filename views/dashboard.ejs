@@ -10,10 +10,12 @@
 
         <div class="container-fluid py-5" style="margin-top: 100px; margin-left:50px">
             <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col col-lg-6 mb-4 mb-lg-0">
-                    <div class="card mb-3" style="border-radius: .5rem;">
+                
+                    <div class="card mb-3" style="border-radius: .5rem;  
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                    background-color: rgba(255, 255, 255, 0.555); width:700px   ">
                         <div class="row g-0">
-                            <div class="col-md-4 gradient-custom text-center text-white"
+                            <div class="col-md-4 gradient-custom text-center"
                                 style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                                 <%if(currentUserObj.gender==="male"){%>
                                     <img src="https://cdn1.iconfinder.com/data/icons/avatars-1-5/136/18-512.png"
@@ -34,7 +36,7 @@
                                             <p class="text-muted">
                                                 <%=currentUserObj.first+" "+currentUserObj.last%></p>
                                         </div>
-                                        <div class=" col-6 mb-3">
+                                        <div class="col-6 mb-3">
                                                     <h6>Email</h6>
                                                     <p class="text-muted">
                                                         <%=currentUserObj.username%>
@@ -70,7 +72,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                
             </div>
         </div>
         </body>
