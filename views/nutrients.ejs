@@ -5,105 +5,113 @@
   <title>Nutrients Calculator</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
+    integrity="sha384-oAOxQRG3D5vrlzRYDXvkenai3HbKCPieN3yF1l6sVtz8PXKEGm5OWGnV9HZPQc//" crossorigin="anonymous">
+  <style>
+    .table {
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+    }
+
+    .table tr:nth-child(even) {
+      background-color: #ceafafc9;
+    }
+
+    .table th {
+      text-align: left;
+      background-color: #45474ef0;
+      color: white;
+    }
+
+    .table td, .table th {
+      padding: 8px;
+    }
+
+    .table tr:hover {
+      background-color: #ddd;
+    }
+
+    .table th {
+      border-bottom: 2px solid #ddd;
+    }
+
+    .table td {
+      border-bottom: 1px solid #ddd;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .table-responsive {
+      margin-top: 20px;
+    }
+    .logo-container {
+      text-align: center;
+      margin-top: 85px;
+    }
+  </style>
 </head>
-<%- include('partials/header') %>
-<%- include('partials/sidenav') %>
-  <body>
-    <span style="display: flex; flex-direction:column; margin-left: 200px; margin-top: 50px;">
-      <div class="container mt-4" >
-        <div>
-          <img src="/images/foodlogo.png" alt="" width="120" height="120" />
-        </div>
-        <form action="/nutrients" method="POST" id="foodForm" >
-          <div class="form-group">
-            <label for="foodItem" style="color: white; font-size:1.3rem">Enter Food Item:</label>
-            <input type="text" name="food" class="form-control" id="foodItem" placeholder="e.g. 2 Apples, 1 Banana">
-          </div>
-          <button type="submit" class="btn btn-primary">Get Nutrients Info</button>
-        </form>
+
+<body>
+  <%- include('partials/header') %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2">
+        <%- include('partials/sidenav') %>
       </div>
-      <% if (foodItemList) { %>
-        <h3 class="text-center mt-4">Nutrients Table</h2>
-        <br>
-        <style>
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-          }
-  
-          th,
-          td {
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #0c0c0c;
-          }
-  
-          th {
-            background-color: #f7f2f279;
-            font-weight: bold;
-          }
-        </style>
-        <div class="table-responsive mx-auto" style="max-width: 1100px;">
-          <table class="table table-bordered table-striped text-center">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Calories</th>
-                <th>Serving Size (g)</th>
-                <th>Fat (g)</th>
-                <th>Saturated Fat (g)</th>
-                <th>Protein (g)</th>
-                <th>Cholesterol (mg)</th>
-                <th>Carbohydrates (g)</th>
-                <th>Fiber (g)</th>
-                <th>Sugar (g)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% foodItemList.forEach((foodItem)=>{ %>
+      <div class="col-md-10">
+        <div class="container">
+          <div class="logo-container">
+            <img src="/images/foodlogo.png" alt="Food Logo" width="120" height="120" />
+          </div>
+          <form action="/nutrients" method="POST" id="foodForm" onsubmit="return false;">
+          <form action="/nutrients" method="POST" id="foodForm">
+            <div class="form-group">
+              <label for="foodItem" class="text-white" style="font-size:1.3rem">Enter Food Items:</label>
+              <input type="text" name="food" class="form-control" id="foodItem" placeholder="e.g. 2 Apples, 1 Banana">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="document.getElementById('foodForm').submit();">Get Nutrients Info</button>
+          </form>
+          <% if (foodItemList) { %>
+          <h3 class="text-center">Nutrients Table</h3>
+          <div class="table-responsive mx-auto" style="max-width: 1100px;">
+            <table class="table">
+              <thead>
                 <tr>
-                  <td>
-                    <%= foodItem.name %>
-                  </td>
-                  <td>
-                    <%= foodItem.calories %>
-                  </td>
-                  <td>
-                    <%= foodItem.serving_size_g %>
-                  </td>
-                  <td>
-                    <%= foodItem.fat_total_g %>
-                  </td>
-                  <td>
-                    <%= foodItem.fat_saturated_g %>
-                  </td>
-                  <td>
-                    <%= foodItem.protein_g %>
-                  </td>
-                  <td>
-                    <%= foodItem.cholesterol_mg %>
-                  </td>
-                  <td>
-                    <%= foodItem.carbohydrates_total_g %>
-                  </td>
-                  <td>
-                    <%= foodItem.fiber_g %>
-                  </td>
-                  <td>
-                    <%= foodItem.sugar_g %>
-                  </td>
+                  <th>Name</th>
+                  <th>Calories</th>
+                  <th>Serving Size (g)</th>
+                  <th>Fat (g)</th>
+                  <th>Saturated Fat (g)</th>
+                  <th>Protein (g)</th>
+                  <th>Cholesterol (mg)</th>
+                  <th>Carbohydrates (g)</th>
+                  <th>Fiber (g)</th>
+                  <th>Sugar (g)</th>
                 </tr>
-                <% })%>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% foodItemList.forEach((foodItem) => { %>
+                <tr>
+                  <td><%= foodItem.name %></td>
+                  <td><%= foodItem.calories %></td>
+                  <td><%= foodItem.serving_size_g %></td>
+                  <td><%= foodItem.fat_total_g %></td>
+                  <td><%= foodItem.fat_saturated_g %></td>
+                  <td><%= foodItem.protein_g %></td>
+                  <td><%= foodItem.cholesterol_mg %></td>
+                  <td><%= foodItem.carbohydrates_total_g %></td>
+                  <td><%= foodItem.fiber_g %></td>
+                  <td><%= foodItem.sugar_g %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
         </div>
-        <% } %>
-    </span>
-      
-    </body>
+      </div>
+    </div>
+  </div>
+</body>
 
 </html>

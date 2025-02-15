@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const _ = require('lodash');
 
 const getDate = () => {
     const today = new Date();
@@ -13,7 +14,7 @@ const getDate = () => {
 
 router.get("/", (req,res)=>{
     res.render("report",{
-        nutrients: null,
+        nutrientData: null,
         loggedIn: req.isAuthenticated()
     })
 })
@@ -25,10 +26,36 @@ router.post("/", (req,res)=>{
         }
         else{
             if(foundUser.nutrients){
+                const reportTimePeriod = req.body.reportTimePeriod;
                 const today = getDate();
-                const nutrients = foundUser.nutrients.get(today);
+                let filteredNutrients;
+
+                if (reportTimePeriod === "today") {
+                    filteredNutrients = foundUser.nutrients.get(today);
+                } 
+            
+                // else if (reportTimePeriod === "last7days") {
+                //     filteredNutrients = _.pickBy(foundUser.nutrients, (value, key) => {
+                //         const date = new Date(key.split('/').reverse().join('-'));
+                //         const lastWeek = new Date();
+                //         lastWeek.setDate(lastWeek.getDate() - 7);
+                //         return date >= lastWeek;
+                //     });
+                // } else if (reportTimePeriod === "last1month") {
+                //     filteredNutrients = _.pickBy(foundUser.nutrients, (value, key) => {
+                //         const date = new Date(key.split('/').reverse().join('-'));
+                //         const lastMonth = new Date();
+                //         lastMonth.setMonth(lastMonth.getMonth() - 1);
+                //         return date >= lastMonth;
+                //     });
+                // } 
+                else if (reportTimePeriod === "alltime") {
+                    filteredNutrients = foundUser.nutrients;
+                }
+                console.log("Backend wala:");
+                console.log(filteredNutrients);
                 res.render("report",{
-                    nutrientData: nutrients,
+                    nutrientData: filteredNutrients,
                     loggedIn: req.isAuthenticated()
                 })
             }

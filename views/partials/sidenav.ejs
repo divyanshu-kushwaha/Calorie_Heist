@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -12,26 +10,24 @@
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://kit.fontawesome.com/1922dd468d.js" crossorigin="anonymous"></script>
-  
 </head>
 
 <body>
-  <% if(loggedIn){ %>
-  <div class="sidenav">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <li class="nav-item">
-        <a href="/user/myprofile"><i class="fa-solid fa-user"></i> My Account</a>
-      </li>
-      <li class="nav-item">
-        <a href="/nutrients/add"><i class="fa-solid fa-utensils"></i>Add Today's Meal</a>
-      </li>
-      <li class="nav-item">
-        <a href="/report"><i class="fa-solid fa-chart-simple"></i>Report Generation</a>
-      </li>
-      <li class="nav-item">
-        <a href="/settings"><i class="fa-solid fa-gear"></i>Settings</a>
-      </li>
-    </ul>
-
-  </div>
-  <%}%>
+  <% if(loggedIn) { %>
+    <div class="sidenav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a href="/user/myprofile"><i class="fa-solid fa-user"></i> My Account</a>
+        </li>
+        <li class="nav-item">
+          <a href="/nutrients/add"><i class="fa-solid fa-utensils"></i>Add Today's Meal</a>
+        </li>
+        <li class="nav-item">
+          <a href="/report"><i class="fa-solid fa-chart-simple"></i>Report Generation</a>
+        </li>
+        <li class="nav-item">
+          <a href="/settings"><i class="fa-solid fa-gear"></i>Settings</a>
+        </li>
+      </ul>
+    </div>
+  <% } %>

@@ -1,28 +1,105 @@
 <%- include('partials/header') %>
-    <%- include('partials/sidenav') %>
+<%- include('partials/sidenav') %>
+<title>Report Generation</title>
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <title>Report Generation</title>
-        <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-            integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-        <link rel="stylesheet" href="/css/styles.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  .main-content {
+    margin-left: 260px; 
+    margin-top: 70px;   
+    min-height: calc(100vh - 70px);
+    padding: 40px;
+  }
 
-        <body>
+  .report-container {
+    margin-top: 20px;
+  }
 
-            <form action="/report" method="post">
-                <div class="form-group">
-                    <label for="activity">Choose the option : </label>
-                    <select class="form-control" name="reportTimePeriod">
-                        <option value="today" selected>Today</option>
-                    </select>
-                    <br>
-                    <button class="btn btn-primary" type="submit">Generate Report</button>
-                </div>
-            </form>
-            
-        </body>
+  .report-form {
+    margin-bottom: 20px;
+  }
 
-        <%- include('partials/footer') %>
+  .report-form h2 {
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="main-content">
+  <div class="container report-container" >
+    <div class="row align-items-center">
+      
+      <!-- LEFT COLUMN: Form -->
+      <div class="col-md-4 report-form">
+        <h2>Report Generation</h2>
+        <form action="/report" method="post">
+          <div class="form-group">
+            <label for="activity">Choose the option:</label>
+            <select class="form-control" name="reportTimePeriod">
+              <option value="today" selected>Today</option>
+              <option value="last7days">Last 7 Days</option>
+              <option value="last1month">Last 1 Month</option>
+              <option value="alltime">All Time</option>
+            </select>
+          </div>
+          <button class="btn btn-primary mt-3" type="submit">Generate Report</button>
+        </form>
+      </div>
+
+      <!-- RIGHT COLUMN: Pie Chart -->
+      <div class="col-md-8 d-flex justify-content-end" >
+        <canvas id="nutrients-chart" width="400" height="400"></canvas>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const nutrientData = <%- JSON.stringify(nutrientData || {}) %>;
+  const filteredData = Object.entries(nutrientData).filter(([key]) => key !== "_id");
+  const labels = filteredData.map(([key]) => key);
+  const dataValues = filteredData.map(([_, value]) => value);
+
+  // Initialize the pie chart
+  const ctx = document.getElementById('nutrients-chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Nutrients',
+        data: dataValues,
+        backgroundColor: [
+          '#ff6384', '#36a2eb', '#cc65fe', '#ffce56',
+          '#4bc0c0', '#9966ff', '#6495ed', '#e74c3c'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Nutrients Breakdown',
+          font: {
+            size: 15,
+          },
+          color: 'black'
+        },
+        legend: {
+          display: true,
+          position: 'bottom',
+          color: 'black'
+        }
+      }
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>
